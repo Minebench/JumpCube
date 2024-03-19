@@ -18,9 +18,7 @@ import org.comroid.api.Startable;
 import org.comroid.cmdr.spigot.SpigotCmdr;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -43,7 +41,7 @@ public class GameManager implements Startable, Initializable {
     public final Set<UUID> joined = new HashSet<>();
     private final Map<UUID, PrevLoc> prevLocations = new ConcurrentHashMap<>();
     private final ExistingCube cube;
-    private final List<UUID> attemptedJoin = new ArrayList<>();
+    private final Set<UUID> attemptedJoin = new HashSet<>();
     private final int baseTime = 30;
     public boolean activeGame = false;
     private int remaining = 30;
@@ -60,7 +58,7 @@ public class GameManager implements Startable, Initializable {
 
         UUID uuid = BukkitUtil.getUuid(sender);
 
-        if (attemptedJoin.removeIf(id -> id.equals(uuid))) {
+        if (attemptedJoin.remove(uuid)) {
             // join user
             message(sender, SpigotCmdr.InfoColorizer, "Joining cube %s...", cube.getCubeName());
             Player player = BukkitUtil.getPlayer(sender);

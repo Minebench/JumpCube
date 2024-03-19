@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -39,6 +40,7 @@ import static org.bukkit.Material.*;
 
 public class ExistingCube implements Cube, Generatable, Startable, Initializable {
     private final static Map<String, Cube> instances = new ConcurrentHashMap<>();
+    private static final BlockData AIR_DATA = AIR.createBlockData();
     public final GameManager manager;
     private final String name;
     private final World world;
@@ -224,10 +226,10 @@ public class ExistingCube implements Cube, Generatable, Startable, Initializable
                             for (y = maxY; y > bottom; y--) {
                                 Block block = world.getBlockAt(x, y, z);
                                 if (y < 50 || block.getType() != AIR)
-                                    block.setType(bar.getRandomMaterial(WALLS));
+                                    block.setBlockData(bar.getRandomBlockData(WALLS));
                             }
                         else {
-                            world.getBlockAt(x, galleryHeight, z).setType(bar.getRandomMaterial(GALLERY));
+                            world.getBlockAt(x, galleryHeight, z).setBlockData(bar.getRandomBlockData(GALLERY));
                             if (off == 1)
                                 world.getBlockAt(x, galleryHeight + 3, z).setType(GLASS);
                         }
@@ -279,8 +281,8 @@ public class ExistingCube implements Cube, Generatable, Startable, Initializable
         for (x = minX + spaceX; x <= maxX - spaceX; x++)
             for (z = minZ + spaceZ; z <= maxZ - spaceZ; z++)
                 for (y = bottom + 10; y < height; y++)
-                    if (JumpCube.rng.nextDouble() % 1 > density) world.getBlockAt(x, y, z).setType(AIR);
-                    else world.getBlockAt(x, y, z).setType(bar.getRandomMaterial(CUBE));
+                    if (JumpCube.rng.nextDouble() % 1 > density) world.getBlockAt(x, y, z).setBlockData(AIR_DATA);
+                    else world.getBlockAt(x, y, z).setBlockData(bar.getRandomBlockData(CUBE));
 
         assert JumpCube.instance != null;
         JumpCube.instance.getLogger().info("Cube " + name + " was generated, took "
@@ -328,7 +330,7 @@ public class ExistingCube implements Cube, Generatable, Startable, Initializable
                         .flatMap(zOff -> IntStream.of(minZ, maxZ)
                                 .map(z -> z == minZ ? z + zOff : z - zOff))
                         .forEach(zBridge -> world.getBlockAt(xBridge, galleryHeight, zBridge)
-                                .setType(bar.getRandomMaterial(GALLERY))));
+                                .setBlockData(bar.getRandomBlockData(GALLERY))));
     }
 
     @Override

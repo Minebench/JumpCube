@@ -62,7 +62,7 @@ public class GameManager implements Startable, Initializable {
             // join user
             message(sender, SpigotCmdr.InfoColorizer, "Joining cube %s...", cube.getCubeName());
             Player player = BukkitUtil.getPlayer(sender);
-            player.getInventory().remove(cube.getBlockBar().getPlaceable());
+            player.getInventory().remove(cube.getBlockBar().getPlaceable().getMaterial());
             prevLocations.put(player.getUniqueId(), new PrevLoc(player));
             joined.add(player.getUniqueId());
             cube.teleportIn(player);
@@ -73,7 +73,7 @@ public class GameManager implements Startable, Initializable {
             // warn user
             message(sender, SpigotCmdr.WarnColorizer, "Warning: You might die in the game! " +
                     "If you still want to play, use the command again. You will also lose any item of type %s " +
-                    "from your inventory!", cube.getBlockBar().getPlaceable().name());
+                    "from your inventory!", cube.getBlockBar().getPlaceable().getMaterial().name());
 
             attemptedJoin.add(uuid);
         }

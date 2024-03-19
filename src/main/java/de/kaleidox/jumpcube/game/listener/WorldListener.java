@@ -24,7 +24,7 @@ public class WorldListener extends ListenerBase implements Listener {
     public void onBlockBreak(BlockDamageEvent event) {
         if (!isInside(event.getBlock().getWorld(), xyz(event.getBlock().getLocation()))) return;
 
-        if (event.getBlock().getType() != cube.getBlockBar().getPlaceable()) {
+        if (event.getBlock().getType() != cube.getBlockBar().getPlaceable().getMaterial()) {
             event.setCancelled(true);
             message(event.getPlayer(), SpigotCmdr.WarnColorizer, "Don't destroy the cube!");
         } else {
@@ -36,7 +36,7 @@ public class WorldListener extends ListenerBase implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         if (!isInside(event.getBlock().getWorld(), xyz(event.getBlock().getLocation()))) return;
 
-        if (event.getBlock().getType() != cube.getBlockBar().getPlaceable()) {
+        if (event.getBlock().getType() != cube.getBlockBar().getPlaceable().getMaterial()) {
             event.setCancelled(true);
             message(event.getPlayer(), SpigotCmdr.WarnColorizer, "Don't destroy the cube!");
         } else {
@@ -49,10 +49,10 @@ public class WorldListener extends ListenerBase implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
         if (!isInside(event.getBlock().getWorld(), xyz(event.getBlock().getLocation()))) return;
 
-        if (event.getBlockPlaced().getType() != cube.getBlockBar().getPlaceable()) {
+        if (event.getBlockPlaced().getType() != cube.getBlockBar().getPlaceable().getMaterial()) {
             event.setCancelled(true);
             message(event.getPlayer(), SpigotCmdr.WarnColorizer, "You can only place %s!",
-                    cube.getBlockBar().getPlaceable().name().toLowerCase());
+                    cube.getBlockBar().getPlaceable().getMaterial().name().toLowerCase());
         } else {
             event.setCancelled(false);
         }

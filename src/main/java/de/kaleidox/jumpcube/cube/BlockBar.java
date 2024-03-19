@@ -7,6 +7,7 @@ import de.kaleidox.jumpcube.util.WorldUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.intellij.lang.annotations.MagicConstant;
@@ -19,22 +20,31 @@ import java.util.Objects;
 import static de.kaleidox.jumpcube.JumpCube.rng;
 
 public class BlockBar implements Generatable {
+    private static final BlockData FALLBACK_DATA = Material.LIGHT_GRAY_WOOL.createBlockData();
     private static Material[] configMaterials = new Material[8];
     private final World world;
     private final @Range(from = 3, to = 3) int[] xyz;
-    private final Material[] materials;
+    private final BlockData[] blocks;
 
-    public Material getPlaceable() {
-        return materials[3];
+    public BlockData getPlaceable() {
+        return blocks[3];
     }
 
     public BlockBar(Player player) {
-        this(player, null);
+        this(player, (BlockData[]) null);
     }
 
     public BlockBar(Player player, @Nullable Material[] materials) throws InvalidBlockBarException {
-        if (materials != null) this.materials = materials;
-        else this.materials = Arrays.copyOf(configMaterials, configMaterials.length);
+        this(player, Arrays.stream(materials)
+                .map(Material::createBlockData)
+                .toArray(BlockData[]::new));
+    }
+
+    public BlockBar(Player player, @Nullable BlockData[] blocks) throws InvalidBlockBarException {
+        if (blocks != null) this.blocks = blocks;
+        else this.blocks = Arrays.stream(configMaterials)
+                .map(Material::createBlockData)
+                .toArray(BlockData[]::new);
 
         this.world = player.getWorld();
         this.xyz = WorldUtil.xyz(player.getLocation());
@@ -46,7 +56,7 @@ public class BlockBar implements Generatable {
     private BlockBar(World world, int[] xyz) {
         this.world = world;
         this.xyz = xyz;
-        this.materials = new Material[8];
+        this.blocks = new BlockData[8];
 
         refresh();
     }
@@ -90,31 +100,31 @@ public class BlockBar implements Generatable {
 
         for (int addY : new int[]{1, 0})
             for (int addX : new int[]{1, 2, 3, 4})
-                world.getBlockAt(xyz[0] + addX, xyz[1] + addY, xyz[2]).setType(materials[c[0]++]);
+                world.getBlockAt(xyz[0] + addX, xyz[1] + addY, xyz[2]).setBlockData(blocks[c[0]++]);
     }
 
-    public Material getRandomMaterial(@MagicConstant(valuesFromClass = MaterialGroup.class) int group) {
+    public BlockData getRandomBlockData(@MagicConstant(valuesFromClass = MaterialGroup.class) int group) {
         switch (group) {
             case MaterialGroup.CUBE:
-                if (rng.nextDouble() % 1 < 0.985) return materials[rng.nextInt(3)];
-                return materials[3];
+                if (rng.nextDouble() % 1 < 0.985) return blocks[rng.nextInt(3)];
+                return blocks[3];
             case MaterialGroup.WALLS:
-                return materials[rng.nextInt(3) + 4];
+                return blocks[rng.nextInt(3) + 4];
             case MaterialGroup.GALLERY:
-                return materials[7];
+                return blocks[7];
         }
 
-        return Material.LIGHT_GRAY_WOOL;
+        return FALLBACK_DATA;
     }
 
     public void validate() throws InvalidBlockBarException {
         refresh();
 
-        for (int i = 0; i < materials.length; i++) {
-            if (!materials[i].isSolid())
-                throw new InvalidBlockBarException(materials[i], InvalidBlockBarException.Cause.NON_SOLID);
-            if (i != 3 && materials[i].isInteractable())
-                throw new InvalidBlockBarException(materials[i], InvalidBlockBarException.Cause.INTERACTABLE);
+        for (int i = 0; i < blocks.length; i++) {
+            if (!blocks[i].getMaterial().isSolid())
+                throw new InvalidBlockBarException(blocks[i], InvalidBlockBarException.Cause.NON_SOLID);
+            if (i != 3 && blocks[i].getMaterial().isInteractable())
+                throw new InvalidBlockBarException(blocks[i], InvalidBlockBarException.Cause.INTERACTABLE);
         }
     }
 
@@ -123,7 +133,7 @@ public class BlockBar implements Generatable {
 
         for (int addY : new int[]{1, 0})
             for (int addX : new int[]{1, 2, 3, 4})
-                materials[c[0]++] = world.getBlockAt(xyz[0] + addX, xyz[1] + addY, xyz[2]).getType();
+                blocks[c[0]++] = world.getBlockAt(xyz[0] + addX, xyz[1] + addY, xyz[2]).getBlockData();
     }
 
     public void save(final FileConfiguration config, final String basePath) {

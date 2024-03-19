@@ -8,6 +8,7 @@ import de.kaleidox.jumpcube.game.listener.PlayerListener;
 import de.kaleidox.jumpcube.game.listener.WorldListener;
 import de.kaleidox.jumpcube.util.BukkitUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -130,9 +131,15 @@ public class GameManager implements Startable, Initializable {
 
     private void tpOut(Player player) {
         leaving.add(player.getUniqueId());
-        PrevLoc pl = prevLocations.get(player.getUniqueId());
+        player.teleport(getOutLocation(player));
+    }
 
-        player.teleport(location(pl.world, pl.location));
+    public Location getOutLocation(Player player) {
+        PrevLoc pl = prevLocations.get(player.getUniqueId());
+        if (pl != null) {
+            return location(pl.world, pl.location);
+        }
+        return cube.getWorld().getSpawnLocation();
     }
 
     private void startTimer() {

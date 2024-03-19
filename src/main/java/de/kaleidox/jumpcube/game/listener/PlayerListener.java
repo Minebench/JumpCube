@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.comroid.cmdr.spigot.SpigotCmdr;
 import org.jetbrains.annotations.NotNull;
+import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import static de.kaleidox.jumpcube.chat.Chat.message;
 import static de.kaleidox.jumpcube.util.WorldUtil.*;
@@ -64,6 +65,17 @@ public class PlayerListener extends ListenerBase implements Listener {
                 && manager.activeGame
                 && manager.joined.contains(player.getUniqueId()))
             manager.leave(player);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerJoin(PlayerSpawnLocationEvent event) {
+        Player player = event.getPlayer();
+        int[] xyz = xyz(player.getLocation());
+        if (isInside(player.getWorld(), xyz)
+                && (!manager.activeGame
+                        || !manager.joined.contains(player.getUniqueId()))) {
+            event.setSpawnLocation(manager.getOutLocation(event.getPlayer()));
+        }
     }
 
     private boolean isInside(@NotNull World world, int[] xyz) {

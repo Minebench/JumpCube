@@ -3,7 +3,6 @@ package de.kaleidox.jumpcube.game.listener;
 import de.kaleidox.jumpcube.JumpCube;
 import de.kaleidox.jumpcube.cube.Cube;
 import de.kaleidox.jumpcube.game.GameManager;
-import de.kaleidox.jumpcube.util.BukkitUtil;
 import de.kaleidox.jumpcube.util.WorldUtil;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -48,13 +47,27 @@ public class PlayerListener extends ListenerBase implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        if (event.getPlayer().hasPermission(JumpCube.Permission.TELEPORT_OUT)) return;
+        if (event.getTo() != null) {
+            int[] after = xyz(event.getTo());
+            if (isInside(event.getPlayer().getWorld(), after)
+                    && manager.activeGame
+                    || !manager.joined.contains(event.getPlayer().getUniqueId()) ) {
+                if (event.getPlayer().hasPermission(JumpCube.Permission.TELEPORT)) return;
+                event.setCancelled(true);
+                message(event.getPlayer(), SpigotCmdr.WarnColorizer, "Use '/jumpcube join' to join the cube!");
+                return;
+            }
+        }
+
         int[] before = xyz(event.getFrom());
-        if (!isInside(event.getPlayer().getWorld(), before)
-                || !manager.activeGame
-                || manager.leaving.contains(BukkitUtil.getUuid(event.getPlayer()))) return;
-        event.setCancelled(true);
-        message(event.getPlayer(), SpigotCmdr.WarnColorizer, "Use /jumpcube leave to leave the cube!");
+        if (isInside(event.getPlayer().getWorld(), before)
+                && manager.activeGame
+                && !manager.leaving.contains(event.getPlayer().getUniqueId())) {
+            if (event.getPlayer().hasPermission(JumpCube.Permission.TELEPORT)) return;
+            event.setCancelled(true);
+            message(event.getPlayer(), SpigotCmdr.WarnColorizer, "Use '/jumpcube leave' to leave the cube!");
+        }
+
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -72,8 +85,8 @@ public class PlayerListener extends ListenerBase implements Listener {
         Player player = event.getPlayer();
         int[] xyz = xyz(player.getLocation());
         if (isInside(player.getWorld(), xyz)
-                && (!manager.activeGame
-                        || !manager.joined.contains(player.getUniqueId()))) {
+                && !manager.activeGame
+                || !manager.joined.contains(player.getUniqueId())) {
             event.setSpawnLocation(manager.getOutLocation(event.getPlayer()));
         }
     }

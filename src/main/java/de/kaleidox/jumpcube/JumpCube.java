@@ -141,7 +141,7 @@ public final class JumpCube extends SpigotCmdr {
         public static final String START_EARLY = "jumpcube.vip.earlystart";
         public static final String BRING_PLACEABLE = "jumpcube.vip.bringplaceable";
 
-        public static final String TELEPORT_OUT = "jumpcube.mod.teleport";
+        public static final String TELEPORT = "jumpcube.mod.teleport";
         public static final String REGENERATE = "jumpcube.mod.regenerate";
 
         public static final String ADMIN = "jumpcube.admin";

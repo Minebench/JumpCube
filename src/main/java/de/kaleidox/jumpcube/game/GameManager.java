@@ -64,8 +64,8 @@ public class GameManager implements Startable, Initializable {
             Player player = BukkitUtil.getPlayer(sender);
             player.getInventory().remove(cube.getBlockBar().getPlaceable());
             prevLocations.put(player.getUniqueId(), new PrevLoc(player));
-            cube.teleportIn(player);
             joined.add(player.getUniqueId());
+            cube.teleportIn(player);
             if (scheduler == null) startTimer();
             Chat.broadcast(DEBUG_NOTIFY, SpigotCmdr.InfoColorizer, "Generating cube...");
             if (joined.size() == 1) cube.generate();

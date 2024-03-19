@@ -61,6 +61,8 @@ public final class JumpCube extends SpigotCmdr {
         saveDefaultConfig();
 
         final FileConfiguration config = getConfig();
+        if (!config.isSet("leave-on-quit"))
+            config.set("leave-on-quit", true);
         if (!config.isSet("cube.defaults.bar.a"))
             config.set("cube.defaults.bar.a", "red_wool");
         if (!config.isSet("cube.defaults.bar.b"))

@@ -77,12 +77,14 @@ public class PlayerListener extends ListenerBase implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        int[] xyz = xyz(player.getLocation());
-        if (isInside(player.getWorld(), xyz)
-                && manager.activeGame
-                && manager.joined.contains(player.getUniqueId()))
-            manager.leave(player);
+        if (JumpCube.instance.getConfig().getBoolean("leave-on-quit", true)) {
+            Player player = event.getPlayer();
+            int[] xyz = xyz(player.getLocation());
+            if (isInside(player.getWorld(), xyz)
+                    && manager.activeGame
+                    && manager.joined.contains(player.getUniqueId()))
+                manager.leave(player);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

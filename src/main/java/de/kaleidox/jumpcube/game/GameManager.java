@@ -106,9 +106,9 @@ public class GameManager implements Startable, Initializable {
             if (player != null) {
                 broadcast(SpigotCmdr.HintColorizer, "%s has reached the goal!", player.getDisplayName());
                 joined.forEach(this::tpOut);
-                joined.clear();
-                leaving.clear();
             } else broadcast(SpigotCmdr.HintColorizer, "All players left the cube. The game has ended.");
+            joined.clear();
+            leaving.clear();
         }
     }
 

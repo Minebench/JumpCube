@@ -41,6 +41,9 @@ import static org.bukkit.Material.*;
 public class ExistingCube implements Cube, Generatable, Startable, Initializable {
     private final static Map<String, Cube> instances = new ConcurrentHashMap<>();
     private static final BlockData AIR_DATA = AIR.createBlockData();
+    private static final BlockData LAVA_DATA = LAVA.createBlockData();
+    private static final BlockData GLASS_DATA = GLASS.createBlockData();
+    private static final BlockData GLASS_PANE_DATA = GLASS_PANE.createBlockData();
     public final GameManager manager;
     private final String name;
     private final World world;
@@ -211,7 +214,7 @@ public class ExistingCube implements Cube, Generatable, Startable, Initializable
         for (x = minX + 1; x < maxX; x++)
             for (z = minZ + 1; z < maxZ; z++)
                 for (y = height; y > bottom; y--)
-                    world.getBlockAt(x, y, z).setType(AIR);
+                    world.getBlockAt(x, y, z).setBlockData(AIR_DATA);
 
         for (int off : new int[]{0, 1, 2}) {
             final int minXloop = minX + off;
@@ -231,14 +234,14 @@ public class ExistingCube implements Cube, Generatable, Startable, Initializable
                         else {
                             world.getBlockAt(x, galleryHeight, z).setBlockData(bar.getRandomBlockData(GALLERY));
                             if (off == 1)
-                                world.getBlockAt(x, galleryHeight + 3, z).setType(GLASS);
+                                world.getBlockAt(x, galleryHeight + 3, z).setBlockData(GLASS_DATA);
                         }
                     }
 
                     if (off == 1) {
-                        world.getBlockAt(x, bottom + 1, z).setType(LAVA);
-                        world.getBlockAt(x, bottom + 2, z).setType(LAVA);
-                        world.getBlockAt(x, bottom + 3, z).setType(LAVA);
+                        world.getBlockAt(x, bottom + 1, z).setBlockData(LAVA_DATA);
+                        world.getBlockAt(x, bottom + 2, z).setBlockData(LAVA_DATA);
+                        world.getBlockAt(x, bottom + 3, z).setBlockData(LAVA_DATA);
                     }
                 }
         }
@@ -259,9 +262,9 @@ public class ExistingCube implements Cube, Generatable, Startable, Initializable
                         for (z_ = minZoff; z_ <= maxZoff; z_++)
                             if (off == 2 && (x_ == minXoff || x_ == maxXoff || z_ == minZoff || z_ == maxZoff))
                                 // renew glass panes
-                                world.getBlockAt(x_, galleryHeight + 1, z_).setType(GLASS_PANE);
+                                world.getBlockAt(x_, galleryHeight + 1, z_).setBlockData(GLASS_PANE_DATA);
                             else // remove gallery extensions
-                                world.getBlockAt(x_, galleryHeight, z_).setType(AIR);
+                                world.getBlockAt(x_, galleryHeight, z_).setBlockData(AIR_DATA);
                 });
 
         generate();
@@ -294,7 +297,7 @@ public class ExistingCube implements Cube, Generatable, Startable, Initializable
 
     @Override
     public void start() {
-        System.out.println("gen bridge");
+        JumpCube.instance.getLogger().fine("gen bridgeZ");
         final int spaceX = (int) (Math.abs(pos[1][0] - pos[0][0]) * spacing);
         final int spaceZ = (int) (Math.abs(pos[1][2] - pos[0][2]) * spacing);
 
@@ -308,15 +311,15 @@ public class ExistingCube implements Cube, Generatable, Startable, Initializable
 
         final int galleryHeight = getGalleryHeight();
 
-        System.out.println("spaceZ = " + spaceZ);
+        JumpCube.instance.getLogger().fine("spaceZ = " + spaceZ);
 
         generateGallery(spaceZ, midX, xDistA, xDistB);
         generateGallery(spaceX, midZ, zDistA, zDistB);
 
-        world.getBlockAt(midX, galleryHeight + 1, minZ + 2).setType(AIR);
-        world.getBlockAt(midX, galleryHeight + 1, maxZ - 2).setType(AIR);
-        world.getBlockAt(minX + 2, galleryHeight + 1, midZ).setType(AIR);
-        world.getBlockAt(maxZ - 2, galleryHeight + 1, midZ).setType(AIR);
+        world.getBlockAt(midX, galleryHeight + 1, minZ + 2).setBlockData(AIR_DATA);
+        world.getBlockAt(midX, galleryHeight + 1, maxZ - 2).setBlockData(AIR_DATA);
+        world.getBlockAt(minX + 2, galleryHeight + 1, midZ).setBlockData(AIR_DATA);
+        world.getBlockAt(maxZ - 2, galleryHeight + 1, midZ).setBlockData(AIR_DATA);
     }
 
     private void generateGallery(int space, int mid, int distA, int distB) {

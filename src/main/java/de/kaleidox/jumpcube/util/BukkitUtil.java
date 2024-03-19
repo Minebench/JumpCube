@@ -23,17 +23,16 @@ public final class BukkitUtil {
     }
 
     public static UUID getUuid(CommandSender cmdSender) {
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers())
-            if (onlinePlayer.getName().equals(cmdSender.getName()))
-                return onlinePlayer.getUniqueId();
+        if (cmdSender instanceof Player player)
+            return player.getUniqueId();
+
         throw new AssertionError("Sender is not online!");
     }
 
     public static Player getPlayer(CommandSender cmdSender) {
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (onlinePlayer.getName().equals(cmdSender.getName()))
-                return onlinePlayer;
-        }
+        if (cmdSender instanceof Player player)
+            return player;
+
         throw new AssertionError("Sender is not online!");
     }
 

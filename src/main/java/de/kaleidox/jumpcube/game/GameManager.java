@@ -106,6 +106,10 @@ public class GameManager implements Startable, Initializable {
             if (player != null) {
                 broadcast(SpigotCmdr.HintColorizer, "%s has reached the goal!", player.getDisplayName());
                 joined.forEach(this::tpOut);
+                for (String command : JumpCube.instance.getConfig().getStringList("price-commands")) {
+                    JumpCube.instance.getServer().dispatchCommand(Bukkit.getConsoleSender(),
+                            command.replace("%player%", player.getName()));
+                }
             } else broadcast(SpigotCmdr.HintColorizer, "All players left the cube. The game has ended.");
             joined.clear();
             leaving.clear();

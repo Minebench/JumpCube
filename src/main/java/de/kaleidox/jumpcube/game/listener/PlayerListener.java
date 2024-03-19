@@ -34,7 +34,12 @@ public class PlayerListener extends ListenerBase implements Listener {
         if (moveTo == null) return;
         int[][] expand = expandVert(cube.getPositions());
         if (!isInside(event.getPlayer().getWorld(), xyz(moveTo))) return;
-        if (!manager.joined.contains(event.getPlayer().getUniqueId())) return;
+        if (!manager.joined.contains(event.getPlayer().getUniqueId())
+                && !event.getPlayer().hasPermission(JumpCube.Permission.ADMIN)) {
+            event.setCancelled(true);
+            message(event.getPlayer(), SpigotCmdr.WarnColorizer, "Use '/jumpcube join' to join the cube!");
+            return;
+        }
 
         if (moveTo.getBlockY() >= cube.getHeight())
             manager.conclude(event.getPlayer());

@@ -1,6 +1,7 @@
 package de.kaleidox.jumpcube.cmd;
 
 import de.kaleidox.jumpcube.JumpCube;
+import de.kaleidox.jumpcube.cube.BlockBar;
 import de.kaleidox.jumpcube.cube.Cube;
 import de.kaleidox.jumpcube.cube.CubeCreationTool;
 import de.kaleidox.jumpcube.cube.ExistingCube;
@@ -14,6 +15,7 @@ import java.util.UUID;
 import static de.kaleidox.jumpcube.chat.Chat.message;
 import static org.comroid.cmdr.spigot.SpigotCmdr.ErrorColorizer;
 import static org.comroid.cmdr.spigot.SpigotCmdr.InfoColorizer;
+import static org.comroid.cmdr.spigot.SpigotCmdr.WarnColorizer;
 
 @Command(name = "jumpcube")
 @Command.Alias("jc")
@@ -26,7 +28,10 @@ public class JumpCubeCommand {
 
     @Command
     public static String reload() {
-        return ErrorColorizer.makeMessage("Sorry, %s not yet implemented", "Reloading");
+        JumpCube.instance.reloadConfig();
+        BlockBar.initConfig(JumpCube.instance.getConfig());
+        return WarnColorizer.makeMessage("Partially reloaded the config. Please restart the server if you want"
+                + " to edit cube-specific values as not everything can be reloaded yet!");
     }
 
     @Command

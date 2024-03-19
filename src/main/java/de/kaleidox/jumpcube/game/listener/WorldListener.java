@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.comroid.cmdr.spigot.SpigotCmdr;
@@ -20,25 +21,40 @@ public class WorldListener extends ListenerBase implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onBlockBreak(BlockBreakEvent event) {
+    public void onBlockBreak(BlockDamageEvent event) {
         if (!isInside(event.getBlock().getWorld(), xyz(event.getBlock().getLocation()))) return;
-        if (event.isCancelled()) event.setCancelled(false);
 
         if (event.getBlock().getType() != cube.getBlockBar().getPlaceable()) {
             event.setCancelled(true);
             message(event.getPlayer(), SpigotCmdr.WarnColorizer, "Don't destroy the cube!");
-        } else message(event.getPlayer(), SpigotCmdr.HintColorizer, "Here's your joker!");
+        } else {
+            event.setCancelled(false);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockBreak(BlockBreakEvent event) {
+        if (!isInside(event.getBlock().getWorld(), xyz(event.getBlock().getLocation()))) return;
+
+        if (event.getBlock().getType() != cube.getBlockBar().getPlaceable()) {
+            event.setCancelled(true);
+            message(event.getPlayer(), SpigotCmdr.WarnColorizer, "Don't destroy the cube!");
+        } else {
+            event.setCancelled(false);
+            message(event.getPlayer(), SpigotCmdr.HintColorizer, "Here's your joker!");
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent event) {
         if (!isInside(event.getBlock().getWorld(), xyz(event.getBlock().getLocation()))) return;
-        if (event.isCancelled()) event.setCancelled(false);
 
         if (event.getBlockPlaced().getType() != cube.getBlockBar().getPlaceable()) {
             event.setCancelled(true);
             message(event.getPlayer(), SpigotCmdr.WarnColorizer, "You can only place %s!",
                     cube.getBlockBar().getPlaceable().name().toLowerCase());
+        } else {
+            event.setCancelled(false);
         }
     }
 
@@ -46,7 +62,6 @@ public class WorldListener extends ListenerBase implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null || event.getItem() == null) return;
         if (!isInside(event.getPlayer().getWorld(), xyz(event.getPlayer().getLocation()))) return;
-        if (event.isCancelled()) event.setCancelled(false);
 
         switch (event.getItem().getType()) {
             case WATER:
@@ -54,6 +69,8 @@ public class WorldListener extends ListenerBase implements Listener {
             case LAVA:
             case LAVA_BUCKET:
                 event.setCancelled(true);
+            default:
+                event.setCancelled(false);
         }
     }
 

@@ -18,8 +18,10 @@ import org.comroid.cmdr.spigot.SpigotCmdr;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -36,8 +38,8 @@ import static de.kaleidox.jumpcube.util.WorldUtil.xyz;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class GameManager implements Startable, Initializable {
-    public final List<UUID> leaving = new ArrayList<>();
-    public final List<Player> joined = new ArrayList<>();
+    public final Set<UUID> leaving = new HashSet<>();
+    public final Set<UUID> joined = new HashSet<>();
     private final Map<UUID, PrevLoc> prevLocations = new ConcurrentHashMap<>();
     private final ExistingCube cube;
     private final List<UUID> attemptedJoin = new ArrayList<>();
@@ -64,7 +66,7 @@ public class GameManager implements Startable, Initializable {
             player.getInventory().remove(cube.getBlockBar().getPlaceable());
             prevLocations.put(player.getUniqueId(), new PrevLoc(player));
             cube.teleportIn(player);
-            joined.add(player);
+            joined.add(player.getUniqueId());
             if (scheduler == null) startTimer();
             Chat.broadcast(DEBUG_NOTIFY, SpigotCmdr.InfoColorizer, "Generating cube...");
             if (joined.size() == 1) cube.generate();
@@ -114,9 +116,16 @@ public class GameManager implements Startable, Initializable {
         tpOut(player);
 
         leaving.remove(uuid);
-        joined.remove(player);
+        joined.remove(uuid);
 
         if (joined.size() == 0) conclude(null);
+    }
+
+    private void tpOut(UUID playerId) {
+        Player player = Bukkit.getPlayer(playerId);
+        if (player != null) {
+            tpOut(player);
+        }
     }
 
     private void tpOut(Player player) {

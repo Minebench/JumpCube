@@ -34,7 +34,7 @@ public class PlayerListener extends ListenerBase implements Listener {
         if (moveTo == null) return;
         int[][] expand = expandVert(cube.getPositions());
         if (!isInside(event.getPlayer().getWorld(), xyz(moveTo))) return;
-        if (!manager.joined.contains(event.getPlayer())) return;
+        if (!manager.joined.contains(event.getPlayer().getUniqueId())) return;
 
         if (moveTo.getBlockY() >= cube.getHeight())
             manager.conclude(event.getPlayer());
@@ -62,7 +62,7 @@ public class PlayerListener extends ListenerBase implements Listener {
         int[] xyz = xyz(player.getLocation());
         if (isInside(player.getWorld(), xyz)
                 && manager.activeGame
-                && manager.joined.contains(player))
+                && manager.joined.contains(player.getUniqueId()))
             manager.leave(player);
     }
 

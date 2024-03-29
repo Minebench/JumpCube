@@ -53,15 +53,12 @@ public class GameManager implements Startable, Initializable {
         this.cube = cube;
     }
 
-    public void join(CommandSender sender) {
+    public void join(Player player) {
         if (activeGame) throw new GameRunningException("A game is active in that cube!");
 
-        UUID uuid = BukkitUtil.getUuid(sender);
-
-        if (attemptedJoin.remove(uuid)) {
+        if (attemptedJoin.remove(player.getUniqueId())) {
             // join user
-            message(sender, SpigotCmdr.InfoColorizer, "Joining cube %s...", cube.getCubeName());
-            Player player = BukkitUtil.getPlayer(sender);
+            message(player, SpigotCmdr.InfoColorizer, "Joining cube %s...", cube.getCubeName());
             if (!player.hasPermission(JumpCube.Permission.BRING_PLACEABLE))
                 player.getInventory().remove(cube.getBlockBar().getPlaceable().getMaterial());
             prevLocations.put(player.getUniqueId(), new PrevLoc(player));
@@ -72,14 +69,14 @@ public class GameManager implements Startable, Initializable {
             if (joined.size() == 1) cube.generate();
         } else {
             // warn user
-            message(sender, SpigotCmdr.WarnColorizer, "Warning: You might die in the game! " +
+            message(player, SpigotCmdr.WarnColorizer, "Warning: You might die in the game! " +
                     "If you still want to play, use the command again");
 
-            if (!sender.hasPermission(JumpCube.Permission.BRING_PLACEABLE))
-                message(sender, SpigotCmdr.WarnColorizer, "You will also lose any item of type %s " +
+            if (!player.hasPermission(JumpCube.Permission.BRING_PLACEABLE))
+                message(player, SpigotCmdr.WarnColorizer, "You will also lose any item of type %s " +
                         "from your inventory!", cube.getBlockBar().getPlaceable().getMaterial().name());
 
-            attemptedJoin.add(uuid);
+            attemptedJoin.add(player.getUniqueId());
         }
     }
 

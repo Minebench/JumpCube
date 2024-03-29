@@ -5,6 +5,7 @@ import de.kaleidox.jumpcube.exception.DuplicateCubeException;
 import de.kaleidox.jumpcube.exception.NoSuchCubeException;
 import de.kaleidox.jumpcube.game.GameManager;
 import de.kaleidox.jumpcube.interfaces.Generatable;
+import de.kaleidox.jumpcube.util.BukkitUtil;
 import de.kaleidox.jumpcube.util.WorldUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -131,10 +132,10 @@ public class ExistingCube implements Cube, Generatable, Startable, Initializable
         return instances.containsKey(name);
     }
 
-    public static Cube getSelection(Player player) throws NoSuchCubeException {
+    public static Cube getSelection(CommandSender sender) throws NoSuchCubeException {
         assert JumpCube.instance != null;
 
-        return Optional.ofNullable(JumpCube.instance.selections.get(player.getUniqueId()))
+        return Optional.ofNullable(JumpCube.instance.selections.get(BukkitUtil.getUuid(sender)))
                 .orElseGet(() -> {
                     Cube sel = null;
                     if (instances.size() == 0)
@@ -144,14 +145,14 @@ public class ExistingCube implements Cube, Generatable, Startable, Initializable
                     if (sel == null)
                         sel = instances.values()
                                 .stream()
-                                .filter(cube -> cube.getWorld().equals(player.getWorld()))
+                                .filter(cube -> cube.getWorld().equals(BukkitUtil.getWorld(sender)))
                                 .min(Comparator.comparingDouble(cube -> WorldUtil.dist(
                                         mid(cube.getPositions()),
-                                        xyz(player.getLocation())
+                                        xyz(BukkitUtil.getLocation(sender))
                                 )))
-                                .orElseThrow(() -> new NoSuchCubeException(player));
-                    JumpCube.instance.selections.put(player.getUniqueId(), sel);
-                    message(player, SpigotCmdr.InfoColorizer, "Cube %s was automatically selected!", sel.getCubeName());
+                                .orElseThrow(() -> new NoSuchCubeException(sender));
+                    JumpCube.instance.selections.put(BukkitUtil.getUuid(sender), sel);
+                    message(sender, SpigotCmdr.InfoColorizer, "Cube %s was automatically selected!", sel.getCubeName());
                     return sel;
                 });
     }

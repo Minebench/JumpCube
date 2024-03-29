@@ -292,8 +292,6 @@ public class ExistingCube implements Cube, Generatable, Startable, Initializable
         JumpCube.instance.getLogger().info("Cube " + name + " was generated, took "
                 + (nanoTime() - startNanos) + " nanoseconds.");
         startNanos = -1;
-
-        start();
     }
 
     @Override

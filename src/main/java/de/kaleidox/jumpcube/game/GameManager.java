@@ -83,7 +83,7 @@ public class GameManager implements Startable, Initializable {
     @Override
     public void start() {
         activeGame = true;
-        //cube.start();
+        cube.start();
     }
 
     @Override

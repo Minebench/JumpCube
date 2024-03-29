@@ -156,7 +156,7 @@ public class GameManager implements Startable, Initializable {
                     scheduler.schedule(new BroadcastRemaining(x * 10), baseTime - (x * 10), SECONDS);
                 });
 
-        scheduler.schedule(cube.manager::start, baseTime, SECONDS);
+        scheduler.schedule(() -> Bukkit.getScheduler().getMainThreadExecutor(JumpCube.instance).execute(this::start), baseTime, SECONDS);
         new BroadcastRemaining(baseTime).run();
     }
 
@@ -179,7 +179,8 @@ public class GameManager implements Startable, Initializable {
 
         @Override
         public void run() {
-            broadcast(SpigotCmdr.InfoColorizer, "Time remaining until cube %s will start: %s seconds", cube.getCubeName(), val);
+            Bukkit.getScheduler().getMainThreadExecutor(JumpCube.instance).execute(
+                    () -> broadcast(SpigotCmdr.InfoColorizer, "Time remaining until cube %s will start: %s seconds", cube.getCubeName(), val));
         }
     }
 }

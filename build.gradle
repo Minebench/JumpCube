@@ -20,8 +20,8 @@ targetCompatibility = 17
 repositories {
     mavenLocal()
     maven { url = 'https://maven.comroid.org' }
-    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-    jcenter()
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+    mavenCentral()
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
@@ -33,7 +33,7 @@ dependencies {
         implementation project(':cmdr-spigot')
     else implementation 'org.comroid:cmdr-spigot:0.+'
 
-    compileOnly "org.spigotmc:spigot-api:$mcVersion-$spigotRC-SNAPSHOT"
+    compileOnly "io.papermc.paper:paper-api:$mcVersion-$spigotRC-SNAPSHOT"
     compileOnly 'org.jetbrains:annotations:23.0.0'
     compileOnly fileTree("libs/")
 

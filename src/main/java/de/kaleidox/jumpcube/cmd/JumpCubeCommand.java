@@ -103,7 +103,10 @@ public class JumpCubeCommand {
 
         if (sel == null)
             throw new NoSuchCubeException(BukkitUtil.getPlayer(sender));
-        CubeCreationTool.Commands.confirm(sender, sel);
+        ExistingCube cube = CubeCreationTool.Commands.confirm(sender, sel);
+        if (cube != null) {
+            pl.selections.put(BukkitUtil.getUuid(sender), cube);
+        }
     }
 
     @Command

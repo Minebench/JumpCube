@@ -156,27 +156,29 @@ public class CubeCreationTool implements Cube {
             message(sender, SpigotCmdr.InfoColorizer, "The BlockBar has been pasted relative to you.");
         }
 
-        public static void confirm(CommandSender sender, Cube sel) {
-            if (!validateEditability(sender, sel)) return;
+        public static ExistingCube confirm(CommandSender sender, Cube sel) {
+            if (!validateEditability(sender, sel)) return null;
 
             if (!((CubeCreationTool) sel).isReady()) {
                 message(sender, SpigotCmdr.ErrorColorizer, "Cube setup isn't complete yet!");
-                return;
+                return null;
             }
 
             int[][] positions = sel.getPositions();
             if (dist(positions[0], positions[1]) < 32) {
                 message(sender, SpigotCmdr.ErrorColorizer, "Cube must be at least %s blocks wide!", 32);
-                return;
+                return null;
             } else if (dist(positions[0], positions[1]) > 64) {
                 message(sender, SpigotCmdr.ErrorColorizer, "Cube cant be wider than %s blocks!", 64);
-                return;
+                return null;
             }
 
             ExistingCube cube = ((CubeCreationTool) sel).create();
             cube.generateFull();
 
             message(sender, SpigotCmdr.InfoColorizer, "Cube %s was created!", cube.getCubeName());
+
+            return cube;
         }
 
         private static boolean validateEditability(CommandSender sender, Cube sel) {
